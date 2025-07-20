@@ -4,6 +4,10 @@ import { ENV } from './utils/config/env';
 
 const app = express();
 
+app.get('/', (req: Request, res: Response) => {
+    res.send('Welcome to The Express JS Weather API');
+})
+
 app.get('/weather', async (req: Request, res: Response) => {
   const city = req.query.city as string;
 
