@@ -1,40 +1,24 @@
 import express, { Request, Response } from 'express';
-import axios from 'axios';
-import { ENV } from './utils/config/env';
+import { ENV } from './utils/env';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerDefinition } from './swagger/swaggerDef';
 
 const app = express();
+
+// Swagger setup using external contract
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDefinition));
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to The Express JS Weather API');
 })
 
-app.get('/weather', async (req: Request, res: Response) => {
-  const city = req.query.city as string;
+// ...existing code...
 
-  if (!city) {
-    return res.status(400).json({ error: 'City parameter is required' });
-  }
+import { getWeatherHandler } from './swagger/weather.handler';
 
-  try {
-    const weatherUrl = `${ENV.WEATHER_API_BASE_URL}?key=${ENV.WEATHER_API_KEY}&q=${encodeURIComponent(city)}`;
-    const response = await axios.get(weatherUrl);
-    const data = response.data;
-
-    res.json({
-      city: data.location.name,
-      region: data.location.region,
-      country: data.location.country,
-      temperature_c: data.current.temp_c,
-      condition: data.current.condition.text,
-      icon: data.current.condition.icon,
-      humidity: data.current.humidity,
-      wind_kph: data.current.wind_kph,
-    });
-  } catch (error: any) {
-    res.status(500).json({ error: 'Failed to fetch weather data', details: error.message });
-  }
-});
+app.get('/weather', getWeatherHandler);
 
 app.listen(ENV.PORT, () => {
   console.log(`Server is running on http://localhost:${ENV.PORT}`);
+  console.log("Swagger Docs available at http://localhost:" + ENV.PORT + "/api-docs");
 });
