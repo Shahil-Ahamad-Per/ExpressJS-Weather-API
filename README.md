@@ -15,7 +15,7 @@ A simple weather API built with Express.js and TypeScript that fetches current w
 
 ## How to use the API:
 
--Run the server and in the url section type ```yourUrl/weather?city=cityName```
+-Run the server and in the url section type ```yourUrl/weather?city=cityName``` For JSON format
 
 ---
 
